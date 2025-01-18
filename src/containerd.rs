@@ -12,7 +12,7 @@ mod test {
     use containerd_client::services::v1::containers_client::ContainersClient;
     use containerd_client::services::v1::{ListContainersRequest, ListNamespacesRequest};
     use containerd_client::services::v1::namespaces_client::NamespacesClient;
-    use tonic::Request;
+    use tonic::{Request, Response};
 
     #[tokio::test(flavor = "multi_thread")]
     async fn test_connect() {
@@ -29,6 +29,9 @@ mod test {
         let request = ListContainersRequest::default();
         let request = with_namespace!(request, "moby");
         let response = client.list(request).await.unwrap();
-        print!("response: {:?} \n", response);
+        let response = response.get_ref();
+        for c in &response.containers {
+            print!("container {:?}\n", c);
+        }
     }
 }

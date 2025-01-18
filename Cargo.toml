@@ -1,0 +1,11 @@
+[package]
+name = "container"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+containerd-client = "0.8.0"
+tokio = { version = "1.4", features = ["rt-multi-thread", "macros", "time"] }
+tonic = "0.12"
+k8s-cri = "0.10"
