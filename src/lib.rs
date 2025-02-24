@@ -1,5 +1,6 @@
-pub mod cri;
+mod cgroup;
 mod containerd;
+pub mod cri;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right

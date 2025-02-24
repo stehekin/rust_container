@@ -11,14 +11,14 @@ mod test {
     use prost::{Message, Name};
     use prost_helper::ToJson;
     use serde::Deserialize;
-    use serde_json::Value;
+    use serde_json::{json, Value};
     use tonic::{IntoRequest, Request, Response};
 
     use oci_spec::runtime::{Spec, SpecBuilder};
 
     #[tokio::test(flavor = "multi_thread")]
     async fn test_connect_containerd() {
-        let channel = connect("/proc/16105/root/run/containerd/containerd.sock")
+        let channel = connect("/proc/89356/root/run/containerd/containerd.sock")
             .await
             .expect("cannt connect");
 
@@ -35,6 +35,14 @@ mod test {
         let response = client.list(request).await.unwrap();
         let response = response.get_ref();
         for c in &response.containers {
+            // for (k, v) in &c.extensions {
+            //     let json_value: Value = serde_json::from_slice(&v.value).expect("msg");
+            //     print!(">>>{0}\n", json_value);
+            //     break;
+            // }
+
+            // break;
+
             let spec_any = &c.spec;
 
             let spec_any = match spec_any {
@@ -47,11 +55,15 @@ mod test {
 
             // Attempt to decode the Any message into an oci_spec::Spec
             let json_value: Value = serde_json::from_slice(&spec_any.value).expect("msg");
+            // print!("{:?}", json_value);
+            // break;
             let spec: Spec = Spec::deserialize(&json_value).expect("msg");
-            //     .map_err(|e| format!("Failed to deserialize spec: {}", e))?;
+            // .map_err(|e| format!("Failed to deserialize spec: {}", e))?;
 
             // let spec = c.spec.as_ref().unwrap();
-            print!("{:?}\n", spec.linux().as_ref().unwrap().namespaces());
+
+            // This contain non-active containers.
+            print!(">>>>> {:?}\n", spec.linux());
         }
     }
 }
